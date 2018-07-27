@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+require "aquatone"
+
+options = {
+  :yes => false
+}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: aquatone-buster OPTIONS"
+
+  opts.on("-d", "--domain DOMAIN", "Domain name to assess") do |v|
+    if !Aquatone::Validation.valid_domain_name?(v)
+      puts "#{v} doesn't look like a valid domain name."
+      exit 1
+    end
+    options[:domain] = v
+  end
+
+  opts.on("-h", "--help", "Show help") do
+    puts opts
+    exit 0
+  end
+
+  opts.on("-y", "--yes", "Bust all available urls") do |v|
+    options[:yes] = true
+  end
+
+end.parse!
+
+Aquatone::Commands::Buster.run(options)

@@ -75,7 +75,7 @@ module Aquatone
         output("\n")
         Aquatone::Collector.descendants.each do |collector|
           next if skip_collector?(collector)
-          output("Running collector: #{bold(collector.meta[:name])}... ")
+          output("Running collector: #{bold(collector.meta[:name])}...")
           begin
             collector_instance = collector.new(@domain, options)
             hosts = collector_instance.execute!
@@ -95,7 +95,6 @@ module Aquatone
       end
 
       def resolve_hosts
-        output("\nResolving #{bold(@hosts.count)} unique hosts...\n")
         task_count = 0
         @start_time = Time.now.to_i
         @hosts.each do |host|

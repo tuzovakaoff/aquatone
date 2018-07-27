@@ -107,9 +107,23 @@ module Aquatone
         output("Generating report...")
         report = Aquatone::Report.new(options[:domain], @visits)
         report.generate(File.join(@assessment.path, "report"))
-        output("done\n")
+
         report_pages = Dir[File.join(@assessment.path, "report", "report_page_*.html")]
+	
+	ports = parse_open_ports_file
+
+	summary = Aquatone::Summary.new(options[:domain], @visits, ports)
+	summary.generate(File.join(@assessment.path, "report"))
+
+	summary_pages = Dir[File.join(@assessment.path, "report", "*summary.html")]
+
+	output("done\n")
+
         output("Report pages generated:\n\n")
+	sort_report_pages(summary_pages).each do |summary_page|
+          output(" - file://#{summary_page}\n")
+	end
+	
         sort_report_pages(report_pages).each do |report_page|
           output(" - file://#{report_page}\n")
         end

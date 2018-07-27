@@ -17,10 +17,39 @@ You will also need a newer version of Ruby installed. If you plan to use AQUATON
 
 Finally, the tool itself can be installed with the following command in a terminal:
 
-    $ gem install aquatone
+    $ gem build aquatone.gemspec
+    $ gem install aquatone-0.7.0.gem
+
+**Note:** If you want to use aquatone together with sublist3r, you need to install sublist3r too through the command 
+    $ sudo apt-get install sublist3r
 
 **IMPORTANT:** AQUATONE's screenshotting capabilities depend on being run on a system with a graphical desktop environment. It is strongly recommended to install and run AQUATONE in a [Kali linux](https://www.kali.org/) virtual machine.
 **I will not provide support or bug fixing for other systems than Kali Linux.**
+
+In case of **Nightmarejs must be run on a system with a graphical desktop session (X11)** error install:
+
+    $ sudo apt-get install -y \
+    xvfb \
+    x11-xkb-utils \
+    xfonts-100dpi \
+    xfonts-75dpi \
+    xfonts-scalable \
+    xfonts-cyrillic \
+    x11-apps \
+    clang \
+    libdbus-1-dev \
+    libgtk2.0-dev \
+    libnotify-dev \
+    libgnome-keyring-dev \
+    libgconf2-dev \
+    libasound2-dev \
+    libcap-dev \
+    libcups2-dev \
+    libxtst-dev \
+    libxss1 \
+    libnss3-dev \
+    gcc-multilib \
+    g++-multilib
 
 ## Usage
 
@@ -87,7 +116,7 @@ Instead of a comma-separated list of ports, you can also specify one of the buil
  * **small**: 80, 443
  * **medium**: 80, 443, 8000, 8080, 8443 (same as default)
  * **large**: 80, 81, 443, 591, 2082, 2095, 2096, 3000, 8000, 8001, 8008, 8080, 8083, 8443, 8834, 8888, 55672
- * **huge**: 80, 81, 300, 443, 591, 593, 832, 981, 1010, 1311, 2082, 2095, 2096, 2480, 3000, 3128, 3333, 4243, 4567, 4711, 4712, 4993, 5000, 5104, 5108, 5280, 5281, 5800, 6543, 7000, 7396, 7474, 8000, 8001, 8008, 8014, 8042, 8069, 8080, 8081, 8083, 8088, 8090, 8091, 8118, 8123, 8172, 8222, 8243, 8280, 8281, 8333, 8337, 8443, 8500, 8834, 8880, 8888, 8983, 9000, 9043, 9060, 9080, 9090, 9091, 9200, 9443, 9800, 9981, 11371, 12443, 16080, 18091, 18092, 20720, 55672
+ * **huge**: Top 1000 ports of nmap
 
 **Example:**
 
@@ -143,6 +172,12 @@ Like aquatone-discover and aquatone-scan, you can make the gathering more or les
 
 As aquatone-gather is interacting with web services, it can be picked up by intrusion detection systems. While it will attempt to lessen the risk of detection by randomising hosts and ports, you can tune the stealthiness more with the `--sleep` and `--jitter` options which work just like the similarly named options for aquatone-discover. Keep in mind that setting the `--sleep` option will force the number of threads to one.
 
+#### Troubleshooting
+
+In case the report does not contain any screenshots, run aquatone-gather with following command
+
+    $ xvfb-run -a aquatone-gather --domain example.com --threads 25
+
 #### Results
 
 When aquatone-gather is finished, it will have created several directories in the domain's AQUATONE assessment directory:
@@ -190,10 +225,25 @@ aquatone-takeover will create a `takeovers.json` file in the domain's assessment
 }
 ```
 
+### Directory Busting
+
+A module which runs dirb on found URLs. By default aquatone-buster asks for each found URL if it should be busted.
+
+    $ aquatone-buster --domain example.com
+
+Running the buster with the --yes option, it busts all found URLs.
+
+    $ aquatone-buster --domain example.com --yes
+
+By default it runs dirb with `-S -w -r` parameters and uses `/usr/share/wordlists/dirb/big.txt` as its wordlist. Will be changeable in future updates.
+
+#### Results
+
+An html report will be generated in the `aquatone/domain/dirb_report/` directory.
+
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/michenriksen/aquatone.
-
+Bug reports and pull requests are welcome on GitHub at https://github.com/0x00xx/aquatone.
 
 ## License
 

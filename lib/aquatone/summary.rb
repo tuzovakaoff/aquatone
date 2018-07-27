@@ -1,11 +1,12 @@
 module Aquatone
-  class Report
-    def initialize(domain, visits, options = {})
+  class Summary
+    def initialize(domain, visits, ports, options = {})
       @domain  = domain
       @visits  = visits
+      @ports = ports
       @options = {
         :per_page => 100,
-        :template => "default"
+        :template => "summary"
       }.merge(options)
     end
 
@@ -18,21 +19,11 @@ module Aquatone
         @visit_slice = h
         @page_number = i
 
-        if i + 1 == slices.count
-          @link_to_next_page = false
-        else
-          @link_to_next_page = true
-          @next_page_path    = File.basename(report_file_name(destination, i + 1))
-        end
+        @link_to_next_page = true
+        @next_page_path    = File.basename("report_page_0.html")
+	@link_to_previous_page = false
 
-        @link_to_previous_page = true
-        if i.zero?
-          @previous_page_path    = File.basename("00summary.html")
-        else
-          @previous_page_path    = File.basename(report_file_name(destination, i - 1))
-        end
-
-        File.open(report_file_name(destination, i), "w") do |f|
+        File.open(summary_file_name(destination), "w") do |f|
           f.write(report.result(b))
         end
       end
@@ -48,8 +39,8 @@ module Aquatone
       CGI.escapeHTML(unsafe.to_s)
     end
 
-    def report_file_name(destination, page_number)
-     File.join(destination, "report_page_#{page_number}.html")
+    def summary_file_name(destination)
+     File.join(destination, "00summary.html")
     end
 
     def url(domain, port)
