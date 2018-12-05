@@ -142,12 +142,17 @@ module Aquatone
 
       def write_to_hosts_file
         @hosts_file_contents = ""
+        host_dictionary_without_excluded_hosts={}
+
         @host_dictionary.each_pair do |host, ip|
-          @hosts_file_contents += "#{host},#{ip}\n"
+          if !exclude_domain?(host)
+            host_dictionary_without_excluded_hosts[host]=ip
+            @hosts_file_contents += "#{host},#{ip}\n"
+          end
         end
         @assessment.write_file("hosts.txt", @hosts_file_contents)
-        @assessment.write_file("hosts.json", @host_dictionary.to_json)
-        output("Wrote #{bold(@host_dictionary.keys.count)} hosts to:\n\n")
+        @assessment.write_file("hosts.json", host_dictionary_without_excluded_hosts.to_json)
+        output("Wrote #{bold(host_dictionary_without_excluded_hosts.keys.count)} hosts to:\n\n")
         output(" - #{bold('file://' + File.join(@assessment.path, 'hosts.txt'))}\n")
         output(" - #{bold('file://' + File.join(@assessment.path, 'hosts.json'))}\n")
       end
@@ -172,6 +177,24 @@ module Aquatone
       def broadcast_ip?(ip)
         ip == "255.255.255.255"
       end
+
+      def exclude_domain?(domain)
+        if options[:excluded_domains]
+          if options[:excluded_domains].include?(domain)
+            true
+          else
+            false
+          end
+        end
+      end
+
+      if @assessment.has_file?("excluded_hosts.json")
+        excluded_hosts = JSON.parse(@assessment.read_file("hosts.json"))
+        excluded_hosts.each do |domain|
+
+        end
+      end
+
 
       def skip_collector?(collector)
         if options[:only_collectors]

@@ -105,6 +105,18 @@ OptionParser.new do |opts|
     options[:threads] = v.to_i
   end
 
+  opts.on("-x", "--exclude-domains DOMAINS", "Exclude specified domains") do |v|
+    domains = v.split(",").map(&:strip).uniq
+    domains.each do |domain|
+      if !Aquatone::Validation.valid_domain_name?(domain)
+        puts "#{domain} is not a valid domain name."
+        exit 1
+      end
+    end
+    options[:excluded_domains] = domains
+  end
+
+
   opts.on("-s", "--sleep SECONDS", "Seconds to sleep between lookups") do |v|
     if v.to_i < 1
       puts "Sleep can't be less than 1"
