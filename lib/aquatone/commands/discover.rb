@@ -188,14 +188,6 @@ module Aquatone
         end
       end
 
-      if @assessment.has_file?("excluded_hosts.json")
-        excluded_hosts = JSON.parse(@assessment.read_file("hosts.json"))
-        excluded_hosts.each do |domain|
-
-        end
-      end
-
-
       def skip_collector?(collector)
         if options[:only_collectors]
           if options[:only_collectors].include?(collector.sluggified_name)
