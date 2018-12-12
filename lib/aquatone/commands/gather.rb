@@ -69,8 +69,8 @@ module Aquatone
             @tasks << [host, port, domain]
           end
         end
-        ENV['tasks'] = @tasks.join(';')
-        ENV['assessment'] = @assessment.path
+        ENV['tasks'] = @tasks.to_s
+        ENV['assessment'] = @assessment.path.to_s
       end
 
       def process_pages

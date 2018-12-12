@@ -7,7 +7,7 @@ describe "Behaviour" do
 
   tasks = ENV['tasks']
   assessment = ENV['assessment']
-  tasks = tasks.split(';')
+  tasks = Array.class_eval (tasks)
   tasks.shuffle.each do |host, port, domain|
     it "should send request to #{host}#{domain}:#{port}" do
 
