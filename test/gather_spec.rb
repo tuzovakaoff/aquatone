@@ -16,7 +16,7 @@ describe "Behaviour" do
         html_destination = File.join(assessment, "html", "#{file_basename}.html")
         headers_destination = File.join(assessment, "headers", "#{file_basename}.txt")
         screenshot_destination = File.join(assessment, "screenshots", "#{file_basename}.png")
-        visit = Aquatone::Browser.visit(url, domain, html_destination, headers_destination, screenshot_destination, :timeout => options[:timeout])
+        visit = Aquatone::Browser.visit(url, domain, html_destination, headers_destination, screenshot_destination, :timeout => 15)
 
 
 
