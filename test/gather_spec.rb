@@ -31,7 +31,7 @@ describe "Behaviour" do
 =end
 
 
-        expect(visit['code']).to be_in (["404","403"])
+        expect(visit['code']).to eq('403').or(eq('404'))
 
       end
 
