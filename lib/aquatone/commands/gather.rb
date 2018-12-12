@@ -97,7 +97,7 @@ module Aquatone
 # see example output in `rspec_json_formatter_result.rb`
 
 
-        RSpec::Core::Runner.run(['test\gather_spec'])
+        RSpec::Core::Runner.run(['test/gather_spec.rb'])
 
         output(  json_formatter.output_hash)
 
