@@ -69,7 +69,7 @@ module Aquatone
             @tasks << [host, port, domain]
           end
         end
-        ENV['tasks'] = @tasks
+        ENV['tasks'] = @tasks.join(';')
         ENV['assessment'] = @assessment.path
       end
 
