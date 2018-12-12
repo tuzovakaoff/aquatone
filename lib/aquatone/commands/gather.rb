@@ -1,3 +1,7 @@
+require 'rspec'
+require 'rspec/core/formatters/json_formatter'
+
+
 module Aquatone
   module Commands
     class Gather < Aquatone::Command
@@ -65,16 +69,39 @@ module Aquatone
             @tasks << [host, port, domain]
           end
         end
+        ENV['tasks'] = @tasks
+        ENV['assessment'] = @assessment.path
       end
 
       def process_pages
-        pool        = thread_pool
+        pool = thread_pool
         @task_count = 0
         @successful = 0
-        @failed     = 0
+        @failed = 0
         @start_time = Time.now.to_i
-        @visits     = []
+        @visits = []
         output("Processing #{bold(@tasks.count)} pages...\n")
+
+
+        config = RSpec.configuration
+        json_formatter = RSpec::Core::Formatters::JsonFormatter.new(config.out)
+
+# create reporter with json formatter
+        reporter = RSpec::Core::Reporter.new(json_formatter)
+# set reporter for rspec configuration
+        config.instance_variable_set(:@reporter, reporter)
+
+# execute rspec runner
+# 'example_spec.rb' is the location of the spec file
+# output test result as json
+# see example output in `rspec_json_formatter_result.rb`
+
+
+        RSpec::Core::Runner.run(['test\gather_spec'])
+
+        output(  json_formatter.output_hash)
+
+
         @tasks.shuffle.each do |task|
           host, port, domain = task
           pool.schedule do
@@ -109,21 +136,21 @@ module Aquatone
         report.generate(File.join(@assessment.path, "report"))
 
         report_pages = Dir[File.join(@assessment.path, "report", "report_page_*.html")]
-	
-	ports = parse_open_ports_file
 
-	summary = Aquatone::Summary.new(options[:domain], @visits, ports)
-	summary.generate(File.join(@assessment.path, "report"))
+        ports = parse_open_ports_file
 
-	summary_pages = Dir[File.join(@assessment.path, "report", "*summary.html")]
+        summary = Aquatone::Summary.new(options[:domain], @visits, ports)
+        summary.generate(File.join(@assessment.path, "report"))
 
-	output("done\n")
+        summary_pages = Dir[File.join(@assessment.path, "report", "*summary.html")]
+
+        output("done\n")
 
         output("Report pages generated:\n\n")
-	sort_report_pages(summary_pages).each do |summary_page|
+        sort_report_pages(summary_pages).each do |summary_page|
           output(" - file://#{summary_page}\n")
-	end
-	
+        end
+
         sort_report_pages(report_pages).each do |report_page|
           output(" - file://#{report_page}\n")
         end
@@ -132,8 +159,8 @@ module Aquatone
 
       def parse_open_ports_file
         contents = @assessment.read_file("open_ports.txt")
-        result   = {}
-        lines    = contents.split("\n").map(&:strip)
+        result = {}
+        lines = contents.split("\n").map(&:strip)
         lines.each do |line|
           values = line.split(",").map(&:strip)
           result[values[0]] = values[1..-1].map(&:to_i)
@@ -159,26 +186,26 @@ module Aquatone
       end
 
       def sort_report_pages(pages)
-        pages.sort_by { |f| File.basename(f).split("_").last.split(".").first.to_i }
+        pages.sort_by {|f| File.basename(f).split("_").last.split(".").first.to_i}
       end
 
       def visit_page(host, port, domain)
-        file_basename          = make_file_basename(host, port, domain)
-        url                    = Aquatone::UrlMaker.make(host, port)
-        html_destination       = File.join(@assessment.path, "html", "#{file_basename}.html")
-        headers_destination    = File.join(@assessment.path, "headers", "#{file_basename}.txt")
+        file_basename = make_file_basename(host, port, domain)
+        url = Aquatone::UrlMaker.make(host, port)
+        html_destination = File.join(@assessment.path, "html", "#{file_basename}.html")
+        headers_destination = File.join(@assessment.path, "headers", "#{file_basename}.txt")
         screenshot_destination = File.join(@assessment.path, "screenshots", "#{file_basename}.png")
         visit = Aquatone::Browser.visit(url, domain, html_destination, headers_destination, screenshot_destination, :timeout => options[:timeout])
         if visit['success']
           @visits.push({
-            :host          => host,
-            :port          => port,
-            :domain        => domain,
-            :url           => url,
-            :file_basename => file_basename,
-            :headers       => visit['headers'],
-            :status        => visit['status']
-          })
+                           :host => host,
+                           :port => port,
+                           :domain => domain,
+                           :url => url,
+                           :file_basename => file_basename,
+                           :headers => visit['headers'],
+                           :status => visit['status']
+                       })
         end
         visit
       end
