@@ -20,6 +20,7 @@ describe "Behaviour" do
 
 
 
+=begin
         if visit['success']
           output("#{green('Processed:')} #{Aquatone::UrlMaker.make(host, port)} (#{domain}) - #{visit['status']}\n")
           @successful += 1
@@ -27,6 +28,7 @@ describe "Behaviour" do
           output("   #{red('Failed:')} #{Aquatone::UrlMaker.make(host, port)} (#{domain}) - #{visit['error']} #{visit['details']}\n")
           @failed += 1
         end
+=end
 
 
         expect(visit['code']).to be_in (["404","403"])
