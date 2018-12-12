@@ -57,6 +57,7 @@ module Aquatone
     end
 
     def header_row_class?(header, value)
+      value = value.join(",")
       case header.downcase
       when 'server', 'x-powered-by'
         :danger
@@ -67,7 +68,6 @@ module Aquatone
       when 'x-permitted-cross-domain-policies'
         :success if value.downcase == 'master-only'
       when 'x-content-type-options'
-        value = value.join(",")
         if value.downcase == 'nosniff'
           :success
         else
@@ -80,7 +80,6 @@ module Aquatone
       when 'public-key-pins'
         :success
       when 'x-xss-protection'
-	value = value.join(",")
         if value.start_with?('1')
           :success
         else
