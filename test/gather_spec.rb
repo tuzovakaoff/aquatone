@@ -13,9 +13,9 @@ describe "Behaviour" do
 
         file_basename = make_file_basename(host, port, domain)
         url = Aquatone::UrlMaker.make(host, port)
-        html_destination = File.join(assessmenth, "html", "#{file_basename}.html")
+        html_destination = File.join(assessment, "html", "#{file_basename}.html")
         headers_destination = File.join(assessment, "headers", "#{file_basename}.txt")
-        screenshot_destination = File.join(assessmenth, "screenshots", "#{file_basename}.png")
+        screenshot_destination = File.join(assessment, "screenshots", "#{file_basename}.png")
         visit = Aquatone::Browser.visit(url, domain, html_destination, headers_destination, screenshot_destination, :timeout => options[:timeout])
 
 
