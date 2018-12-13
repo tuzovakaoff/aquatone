@@ -84,7 +84,7 @@ module Aquatone
 
 
         config = RSpec.configuration
-        json_formatter = RSpec::Core::Formatters::JsonFormatter.new(config.out)
+        json_formatter = RSpec::Core::Formatters::JsonFormatter.new(config.output_stream)
 
 # create reporter with json formatter
         reporter = RSpec::Core::Reporter.new(json_formatter)
