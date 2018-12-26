@@ -101,6 +101,18 @@ OptionParser.new do |opts|
     options[:disable_collectors] = collectors
   end
 
+  opts.on("--exclude-domains DOMAINS", "Exclude specified domains") do |v|
+    domains = v.split(",").map(&:strip).uniq
+    domains.each do |domain|
+      if !Aquatone::Validation.valid_domain_name?(domain)
+        puts "#{domain} is not a valid domain name."
+        exit 1
+      end
+    end
+    options[:excluded_domains] = domains
+  end
+
+
   opts.on("-t", "--threads THREADS", "Number of concurrent threads to use") do |v|
     options[:threads] = v.to_i
   end
